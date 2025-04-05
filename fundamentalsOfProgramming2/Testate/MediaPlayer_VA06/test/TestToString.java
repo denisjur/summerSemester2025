@@ -23,7 +23,7 @@ public class TestToString {
     public void setUp() {
 		// to test Windows or Linux just use the corresponding lines in comments below
 		// Windows: uncomment the next line
-		//sep = Utils.emulateWindows();
+		// sep = Utils.emulateWindows();
 		// Linux: uncomment the next line
 		sep = Utils.emulateLinux();
 
