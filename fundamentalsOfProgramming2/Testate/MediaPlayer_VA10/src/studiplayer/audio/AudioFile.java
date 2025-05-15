@@ -193,6 +193,7 @@ public abstract class AudioFile {
 	}
 
 	// ✅ RICHTIG HIER: außerhalb von getTimeInMillis()
-	public abstract long getRawDuration();
-
+	public long getRawDuration() {
+	    return 0; // Dummy-Wert für nicht-abspielbare Dateien
 	}
+}

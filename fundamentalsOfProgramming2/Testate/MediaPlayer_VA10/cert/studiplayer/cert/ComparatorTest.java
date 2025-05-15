@@ -30,37 +30,23 @@ public class ComparatorTest {
                 super(path);
             }
 
-            @Override
-            public void play() throws NotPlayableException {
-                // leer
-            }
-
-            @Override
-            public void stop() {
-                // leer
-            }
-
-            @Override
-            public void togglePause() {
-                // leer
-            }
-
-            @Override
             public String formatDuration() {
                 return null;
             }
 
-            @Override
             public String formatPosition() {
                 return null;
             }
 
-            @Override
-            public long getRawDuration() {
-                return 0;
+            public void play() throws NotPlayableException {
+            }
+
+            public void stop() {
+            }
+
+            public void togglePause() {
             }
         }
-
         
         // Wir bauen uns mehrere AudioFile Objekte. Darunter auch Objekte der
         // hier eigens abgeleiteten Klasse MidiFile.
