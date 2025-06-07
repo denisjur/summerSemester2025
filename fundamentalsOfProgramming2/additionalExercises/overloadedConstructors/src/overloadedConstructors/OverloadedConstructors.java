@@ -11,7 +11,7 @@ public class OverloadedConstructors {
 		//example: Let us create some pizza
 		
 		Pizza pizza = new Pizza("thicc crust", "tomato", "mozarella", "pepperoni"); // Was wenn ich nun einen arg entfernen möchte, 
-																					// dafür brauchen wir overloaded instructors
+											// dafür brauchen wir overloaded instructors
 		System.out.println("Here are the ingredients of your pizza: ");
 		System.out.println(pizza.bread);	
 		System.out.println(pizza.sauce);
