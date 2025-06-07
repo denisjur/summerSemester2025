@@ -48,13 +48,13 @@ public class objectOOP {
 		//		+---------------------------------------------------+
 		
 		
-		 	Car myCar = new Car(); // Zuerst die Klasse, also Car
+		 	Car myCar = new Car(); // <-- Das echte Objekt wird erstellt
 		    myCar.drive();
-		    myCar.brake(); // vorausgesetzt, du hast das vorher von "break()" zu "brake()" geändert
+		    myCar.brake();
 		    System.out.println(myCar.model); //Wir listen hier beispielsweise einen Attribut
 		    
 		    
-		    //Haide sa mai facem o masina:
+		    //Haide sa mai facem o masina, al doilea objekt adevarat
 		    Car myCar2 = new Car();
 		    System.out.println(myCar2.make);
 		    
