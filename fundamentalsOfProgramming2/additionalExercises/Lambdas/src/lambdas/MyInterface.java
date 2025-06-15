@@ -1,8 +1,6 @@
 package lambdas;
 
-@FunctionalInterface // Acum facem un Functiona Interface din acest Interface
-//Un funcitonal interface contains one abstract method.
+@FunctionalInterface // Macht deutlich, dass dieses Interface genau eine abstrakte Methode hat
 public interface MyInterface {
-	public void message(String name, char symbol);
-	
+    public void message(String name, char symbol); // Eine Methode = Voraussetzung für Lambda
 }
