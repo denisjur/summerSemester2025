@@ -1,0 +1,172 @@
+// =============================================
+// 🔍 AUFGABENSTELLUNG:
+// Erstelle ein JavaFX-Programm mit 3 Tabs:
+// 1. Formular (Name, Alter, Geschlecht eingeben + Bestätigung)
+// 2. Taschenrechner (zwei Zahlen und + - * / Buttons)
+// 3. Filterliste (Suchfeld, ListView mit Live-Suche)
+//
+// Ziele: Zeige Kenntnisse über Layouts, TextFields, ChoiceBox,
+// Button-Events, Streams, Exception Handling und GUI-Komponenten.
+//
+// Dieses Projekt deckt ALLE prüfungsrelevanten JavaFX-Themen ab!
+// =============================================
+
+import javafx.application.Application;
+import javafx.stage.Stage;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.collections.*;
+import javafx.collections.transformation.FilteredList;
+import javafx.geometry.Insets;
+
+public class MegaJavaFX extends Application {
+
+    public static void main(String[] args) {
+        launch(args); // Startet JavaFX-Programm (ruft automatisch start())
+    }
+
+    @Override
+    public void start(Stage stage) {
+        // Haupt-Container: TabPane mit 3 Tabs
+        TabPane tabs = new TabPane();
+
+        // 3 Tabs hinzufügen mit je einem eigenen Bereich (VBox)
+        tabs.getTabs().add(new Tab("Formular", buildFormular()));    // Name, Alter, Geschlecht
+        tabs.getTabs().add(new Tab("Rechner", buildCalculator()));   // Rechnen mit zwei Zahlen
+        tabs.getTabs().add(new Tab("Liste filtern", buildFilterList())); // Suchfeld mit Filterliste
+
+        tabs.getTabs().forEach(t -> t.setClosable(false)); // Tabs nicht schließbar
+
+        stage.setScene(new Scene(tabs, 600, 400)); // Fenstergröße
+        stage.setTitle("MEGACODE: JavaFX GUI Sammlung");
+        stage.show(); // Fenster anzeigen
+    }
+
+    // ================================================
+    // TAB 1: FORMULAR mit Eingabe + Prüfung
+    // ================================================
+    private VBox buildFormular() {
+        VBox box = new VBox(10); // Vertikales Layout mit Abstand 10px
+        box.setPadding(new Insets(10)); // Rand außen
+
+        TextField name = new TextField(); // Eingabe für Namen
+        name.setPromptText("Name");
+
+        TextField alter = new TextField(); // Eingabe für Alter
+        alter.setPromptText("Alter (Zahl)");
+
+        // Dropdown-Menü (ChoiceBox) für Geschlecht
+        ChoiceBox<String> geschlecht = new ChoiceBox<>();
+        geschlecht.setItems(FXCollections.observableArrayList("M", "W", "Divers"));
+        geschlecht.getSelectionModel().selectFirst(); // Default = erster Eintrag
+
+        Label ausgabe = new Label(); // Ergebnis-Label für Rückmeldung
+
+        Button senden = new Button("Absenden");
+
+        // Wenn Button gedrückt: Werte lesen, prüfen, anzeigen
+        senden.setOnAction(e -> {
+            try {
+                String n = name.getText();
+                int a = Integer.parseInt(alter.getText());
+                String g = geschlecht.getValue();
+                ausgabe.setText("Name: " + n + ", Alter: " + a + ", Geschlecht: " + g);
+            } catch (Exception ex) {
+                ausgabe.setText("Fehlerhafte Eingabe!");
+            }
+        });
+
+        // Komponenten hinzufügen
+        box.getChildren().addAll(new Label("Formular"), name, alter, geschlecht, senden, ausgabe);
+        return box;
+    }
+
+    // ================================================
+    // TAB 2: Rechner mit 2 Eingabefeldern und 4 Buttons
+    // ================================================
+    private VBox buildCalculator() {
+        VBox layout = new VBox(10);
+        layout.setPadding(new Insets(10));
+
+        TextField z1 = new TextField();
+        z1.setPromptText("Zahl 1");
+
+        TextField z2 = new TextField();
+        z2.setPromptText("Zahl 2");
+
+        Label result = new Label("Ergebnis:");
+
+        // 4 Rechen-Buttons
+        Button add = new Button("+");
+        Button sub = new Button("-");
+        Button mul = new Button("*");
+        Button div = new Button("/");
+
+        // Buttons nebeneinander in einer HBox
+        HBox buttons = new HBox(10, add, sub, mul, div);
+
+        // Bei Klick: Eingaben verarbeiten und Rechenoperation durchführen
+        add.setOnAction(e -> rechnen(z1, z2, result, "+"));
+        sub.setOnAction(e -> rechnen(z1, z2, result, "-"));
+        mul.setOnAction(e -> rechnen(z1, z2, result, "*"));
+        div.setOnAction(e -> rechnen(z1, z2, result, "/"));
+
+        layout.getChildren().addAll(new Label("Zahl 1:"), z1, new Label("Zahl 2:"), z2, buttons, result);
+        return layout;
+    }
+
+    // Rechenlogik + Fehlerbehandlung
+    private void rechnen(TextField a, TextField b, Label ausgabe, String op) {
+        try {
+            double x = Double.parseDouble(a.getText()); // Zahl 1
+            double y = Double.parseDouble(b.getText()); // Zahl 2
+
+            // Moderne switch-Auswertung (ab Java 14)
+            double r = switch (op) {
+                case "+" -> x + y;
+                case "-" -> x - y;
+                case "*" -> x * y;
+                case "/" -> {
+                    if (y == 0) throw new ArithmeticException("Durch 0!");
+                    yield x / y;
+                }
+                default -> 0;
+            };
+
+            ausgabe.setText("Ergebnis: " + r);
+        } catch (NumberFormatException e) {
+            ausgabe.setText("Ungültige Zahl!");
+        } catch (ArithmeticException e) {
+            ausgabe.setText("Fehler: " + e.getMessage());
+        }
+    }
+
+    // ================================================
+    // TAB 3: Filterbare Liste mit Live-Suche
+    // ================================================
+    private VBox buildFilterList() {
+        VBox box = new VBox(10);
+        box.setPadding(new Insets(10));
+
+        TextField suchfeld = new TextField(); // Sucheingabe
+        suchfeld.setPromptText("Suchbegriff...");
+
+        // Ursprüngliche Liste
+        ObservableList<String> daten = FXCollections.observableArrayList("Apfel", "Banane", "Birne", "Mango", "Kiwi");
+
+        // FilteredList zeigt nur passende Einträge
+        FilteredList<String> gefiltert = new FilteredList<>(daten, s -> true);
+
+        ListView<String> liste = new ListView<>(gefiltert); // Liste mit Filterdaten
+
+        // Listener: Wenn Text sich ändert → Filter anpassen
+        suchfeld.textProperty().addListener((obs, alt, neu) -> {
+            gefiltert.setPredicate(item -> item.toLowerCase().contains(neu.toLowerCase()));
+        });
+
+        box.getChildren().addAll(new Label("Suche"), suchfeld, liste);
+        return box;
+    }
+}
+
